@@ -18,7 +18,7 @@ The framework combines teacher-student distillation with multi-layer DP noise in
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/dp-embeddings-nlp.git
+git clone https://github.com/ShuyaFeng/DPED.git
 cd dp-embeddings-nlp
 
 # Install requirements
