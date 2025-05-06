@@ -1,0 +1,17 @@
+Task,Method,Accuracy,F1,Precision,Recall,Time(s)
+sst2,non-private,N/A,N/A,N/A,N/A,1.32
+sst2,dp-sgd,N/A,N/A,N/A,N/A,1.31
+sst2,pate-distill,N/A,N/A,N/A,N/A,1.31
+sst2,dp-distill,N/A,N/A,N/A,N/A,1.32
+qqp,non-private,N/A,N/A,N/A,N/A,1.31
+qqp,dp-sgd,N/A,N/A,N/A,N/A,1.35
+qqp,pate-distill,N/A,N/A,N/A,N/A,1.35
+qqp,dp-distill,N/A,N/A,N/A,N/A,1.33
+mnli,non-private,N/A,N/A,N/A,N/A,1.35
+mnli,dp-sgd,N/A,N/A,N/A,N/A,1.33
+mnli,pate-distill,N/A,N/A,N/A,N/A,1.36
+mnli,dp-distill,N/A,N/A,N/A,N/A,1.35
+cola,non-private,N/A,N/A,N/A,N/A,1.39
+cola,dp-sgd,N/A,N/A,N/A,N/A,1.33
+cola,pate-distill,N/A,N/A,N/A,N/A,1.32
+cola,dp-distill,N/A,N/A,N/A,N/A,1.33
