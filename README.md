@@ -19,7 +19,7 @@ The framework combines teacher-student distillation with multi-layer DP noise in
 ```bash
 # Clone repository
 git clone https://github.com/ShuyaFeng/DPED.git
-cd dp-embeddings-nlp
+cd DPED
 
 # Install requirements
 pip install -r requirements.txt
@@ -28,14 +28,16 @@ pip install -r requirements.txt
 ## Requirements
 
 - Python 3.8+
-- PyTorch 1.9+
-- Transformers 4.11+
-- Opacus 0.15+
-- Datasets
-- NumPy
-- scikit-learn
-- tqdm
-- matplotlib
+- PyTorch 1.7.0+ (but <2.1.0 for Opacus compatibility)
+- Transformers 4.0.0+
+- Opacus 1.4.0 (specific version for PyTorch compatibility)
+- Datasets 1.0.0+
+- NumPy 1.19.0+
+- scikit-learn 0.24.0+
+- tqdm 4.50.0+
+- matplotlib 3.3.0+
+
+**Note**: The specific Opacus version (1.4.0) is required for compatibility with PyTorch 2.0.x. Newer versions of Opacus may not work with this PyTorch version.
 
 ## File Structure
 
@@ -45,7 +47,7 @@ pip install -r requirements.txt
 - `models.py`: Model classes including TeacherEnsemble, StudentModel, and distillation functions
 - `training.py`: Functions for training and evaluating models
 - `main.py`: Main script for running individual experiments
-- `run_experiments.py`: Script for running batches of experiments
+- `requirements.txt`: Python package dependencies
 
 ## How to Run
 
@@ -53,26 +55,31 @@ pip install -r requirements.txt
 
 ```bash
 # Train on SST-2 with our proposed DP-Distill method
-python main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0
 
 # Train on CoNLL-2003 NER with DP-SGD baseline
-python main.py --dataset conll2003 --method dp-sgd --epsilon 4.0
+python3 main.py --dataset conll2003 --method dp-sgd --epsilon 4.0
+
+# Quick test with reduced settings
+python3 main.py --dataset glue --task sst2 --method non-private --num_epochs 1 --batch_size 8
 ```
 
 ### Running Comprehensive Experiments
 
-```bash
-# Run experiments on all GLUE tasks
-python run_experiments.py --experiment glue
+Since the wrapper scripts have been removed to clean up the codebase, use the main script with different flags:
 
-# Run experiments on CoNLL-2003 NER
-python run_experiments.py --experiment conll
+```bash
+# Compare all methods on SST-2
+python3 main.py --dataset glue --task sst2 --run_all_methods --epsilon 8.0
 
 # Run privacy-utility tradeoff experiments 
-python run_experiments.py --experiment privacy_utility
+python3 main.py --dataset glue --task sst2 --privacy_utility_tradeoff
 
-# Run ablation studies
-python run_experiments.py --experiment ablation
+# Run experiments on all GLUE tasks (run each separately)
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task qqp --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task mnli --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task cola --method dp-distill --epsilon 8.0
 ```
 
 ## Command Line Arguments
@@ -90,10 +97,12 @@ python run_experiments.py --experiment ablation
 - `--run_all_methods`: Run all methods for comparison
 - `--privacy_utility_tradeoff`: Run privacy-utility tradeoff experiment
 
-### Run Experiments Script
+### Additional Useful Arguments
 
-- `--experiment`: Type of experiment to run (glue, conll, privacy_utility, ablation)
-- `--output_dir`: Directory to save results
+- `--batch_size`: Batch size for training (default: 16, use smaller values like 8 for limited memory)
+- `--num_epochs`: Number of training epochs (default: 3, use 1 for quick testing)
+- `--seed`: Random seed for reproducibility
+- `--max_seq_length`: Maximum sequence length for input (default: 128)
 
 ## Methods
 
@@ -106,19 +115,13 @@ python run_experiments.py --experiment ablation
 
 ### GLUE Results (at ε≈8)
 
-To reproduce the GLUE benchmark results:
+To reproduce the GLUE benchmark results, run individual tasks:
 
 ```bash
-python run_experiments.py --experiment glue
-```
-
-Or run individual tasks:
-
-```bash
-python main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0
-python main.py --dataset glue --task qqp --method dp-distill --epsilon 8.0
-python main.py --dataset glue --task mnli --method dp-distill --epsilon 8.0
-python main.py --dataset glue --task cola --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task qqp --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task mnli --method dp-distill --epsilon 8.0
+python3 main.py --dataset glue --task cola --method dp-distill --epsilon 8.0
 ```
 
 ### CoNLL-2003 NER Results
@@ -126,8 +129,8 @@ python main.py --dataset glue --task cola --method dp-distill --epsilon 8.0
 For named entity recognition results:
 
 ```bash
-python main.py --dataset conll2003 --method dp-distill --epsilon 8.0
-python main.py --dataset conll2003 --method dp-distill --epsilon 4.0
+python3 main.py --dataset conll2003 --method dp-distill --epsilon 8.0
+python3 main.py --dataset conll2003 --method dp-distill --epsilon 4.0
 ```
 
 ### Privacy-Utility Tradeoff
@@ -135,15 +138,25 @@ python main.py --dataset conll2003 --method dp-distill --epsilon 4.0
 To generate privacy-utility tradeoff curves:
 
 ```bash
-python main.py --dataset glue --task sst2 --privacy_utility_tradeoff --run_all_methods
+python3 main.py --dataset glue --task sst2 --privacy_utility_tradeoff --run_all_methods
 ```
 
 ### Ablation Studies
 
-To analyze the contribution of each component:
+To analyze the contribution of each component, run the full method with different configurations:
 
 ```bash
-python run_experiments.py --experiment ablation
+# Full model
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0
+
+# Without multi-layer noise
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0 --no_multi_layer_noise
+
+# With fewer teachers
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0 --num_teachers 3
+
+# With more noise
+python3 main.py --dataset glue --task sst2 --method dp-distill --epsilon 8.0 --teacher_noise 1.0
 ```
 
 ## Results
@@ -159,7 +172,35 @@ The framework achieves significantly improved privacy-utility trade-offs:
 Results will be saved in:
 - Model checkpoints: `models/best_model_*`
 - Privacy-utility plots: `privacy_utility_tradeoff_*.png`
-- Results summaries: `results/*/results_summary.txt`
+
+## Troubleshooting
+
+### Common Issues
+
+1. **AttributeError: module 'torch.nn' has no attribute 'RMSNorm'**
+   - This indicates a version compatibility issue between PyTorch and Opacus
+   - Solution: Install the specific compatible version with `pip install opacus==1.4.0`
+
+2. **ModuleNotFoundError: No module named 'transformers'**
+   - Install missing dependencies: `pip install -r requirements.txt`
+
+3. **CUDA out of memory errors**
+   - Reduce batch size: `--batch_size 8` or `--batch_size 4`
+   - Reduce sequence length: `--max_seq_length 64`
+
+4. **Slow training**
+   - For quick testing, use: `--num_epochs 1 --batch_size 8`
+   - Use CPU if GPU memory is limited (training will be slower)
+
+### Installation Issues
+
+If you encounter package conflicts, try creating a fresh virtual environment:
+
+```bash
+python3 -m venv dped_env
+source dped_env/bin/activate  # On Windows: dped_env\Scripts\activate
+pip install -r requirements.txt
+```
 
 ## Citation
 
