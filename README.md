@@ -202,20 +202,6 @@ source dped_env/bin/activate  # On Windows: dped_env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Citation
-
-If you use this code, please cite:
-
-```
-@article{dp-embeddings-nlp,
-  title={DPED: Multi-Layer Noise Distillation for Privacy-Preserving Text
-Embeddings},
-  author={Shuya Feng, Yuan Hong},
-  journal={ArXiv},
-  year={2025}
-}
-```
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
