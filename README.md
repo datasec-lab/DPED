@@ -208,10 +208,11 @@ If you use this code, please cite:
 
 ```
 @article{dp-embeddings-nlp,
-  title={Differentially Private Embeddings for NLP via Teacher-Student Distillation and Multi-Layer Differential Privacy},
-  author={Your Name},
+  title={DPED: Multi-Layer Noise Distillation for Privacy-Preserving Text
+Embeddings},
+  author={Shuya Feng, Yuan Hong},
   journal={ArXiv},
-  year={2023}
+  year={2025}
 }
 ```
 
